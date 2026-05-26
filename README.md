@@ -1,280 +1,173 @@
-# Smart Assistant CLI
+# Notii
 
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
-[![PyPI](https://img.shields.io/pypi/v/smart-assistant-cli?color=green)](https://pypi.org/project/smart-assistant-cli/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Code style: PEP 8](https://img.shields.io/badge/code%20style-PEP%208-orange)](https://peps.python.org/pep-0008/)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-> **A personal productivity tool for managing contacts and notes — entirely in your terminal.**
-
-Smart Assistant is a polished command-line application that keeps your address book and notes organised, validates every input, and persists everything safely between sessions. It feels like a real tool, because it is one.
-
----
-
-## ✨ Features
-
-| Area | What it does |
-|------|-------------|
-| 📇 **Contacts** | Store name, address, multiple phones, e-mail, and birthday |
-| 🎂 **Birthdays** | List contacts whose birthday falls within the next N days |
-| ✅ **Validation** | Phones and e-mails are validated on entry; bad input is rejected gracefully, never crashes |
-| 🔍 **Search** | Full-text search across all contact fields |
-| ✏️ **Edit & Delete** | Update any field or remove a contact entirely |
-| 📝 **Notes** | Create titled notes with a free-text body |
-| 🔍 **Note Search** | Full-text search across note titles and bodies |
-| ✏️ **Note Edit** | Change the title, body, or both of any note |
-| 🏷️ **Tags** | Attach keyword tags to notes; search and sort by tag |
-| 💾 **Persistence** | All data saved to `~/.smart_assistant/` — survives restarts |
-| 🎨 **Rich UI** | Tables, coloured panels, and styled text via [rich](https://github.com/Textualize/rich) |
-| ⌨️ **Autocomplete** | Tab-completion and command history via [prompt_toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) |
+A command-line tool for managing contacts and notes.
+Stores an address book with full contact details — name, phones, e-mail, birthday,
+and address — and a notebook of text notes that can be searched and organised with tags.
+All data is saved automatically between sessions.
 
 ---
 
-## 📦 Installation
+## Features
 
-### From PyPI *(recommended)*
+**Contacts**
 
-```bash
-pip install smart-assistant-cli
+- Add a contact with full name, phone number, e-mail, birthday, and address
+- Search contacts across all fields by a text query
+- Edit any field of an existing contact
+- Delete a contact
+- View contacts whose birthday falls within a given number of days
+
+**Notes**
+
+- Create notes with a title and a free-text body
+- Search notes by their text content
+- Edit a note's title or body
+- Delete notes
+- Attach keyword tags to notes
+- Search notes by tag and sort alphabetically by tag
+
+**General**
+
+- Phone numbers and e-mail addresses are validated on entry; invalid values are
+  rejected with a clear message and the prompt is repeated
+- Data is persisted automatically to the `data/` folder at the project root
+- Tab-autocomplete and command history via prompt_toolkit
+- All commands use a `/` prefix; any input without a leading `/` is rejected with
+  a friendly error
+
+---
+
+## Requirements
+
+Python 3.10 or later.
+
+---
+
+## Installation
+
+### From PyPI
+
+```
+pip install notii
 ```
 
 ### From source
 
-```bash
+```
 git clone https://github.com/Serhii2009/smart-assistant-cli.git
 cd smart-assistant-cli
+pip install -r requirements.txt
 pip install -e .
 ```
 
-> **Requires Python 3.10 or later.**
+---
+
+## Running
+
+```
+notii
+```
+
+The application starts, shows a short header, and waits for commands.
+Type `/` to see the full command list with autocomplete.
 
 ---
 
-## 🚀 Quick Start
+## Commands
 
-```bash
-assistant
-```
+All commands use a `/` prefix. After entering a command, the application guides
+you through each required field on a separate prompt line. No arguments are ever
+typed on the same line as the command itself.
 
-That's it. The application loads your data, prints the help table once, and waits for commands.
-
-```
-  ____                       _      _            _     _              _
- / ___| _ __ ___   __ _ _ __| |_   / \   ___ ___(_)___| |_ __ _ _ __ | |_
- \___ \| '_ ` _ \ / _` | '__| __| / _ \ / __/ __| / __| __/ _` | '_ \| __|
-  ___) | | | | | | (_| | |  | |_ / ___ \__ \__ \ \__ \ || (_| | | | | |_
- |____/|_| |_| |_|\__,_|_|   \__/_/   \_\___/___/_|___/\__\__,_|_| |_|\__|
-
-            Personal Productivity CLI  •  v1.0.0
-            Type  help  to see all commands
-
-[assistant] ❯ _
-```
-
----
-
-## 🛠️ Commands Reference
-
-### Contacts
-
-| Command | Description | Example |
-|---------|-------------|---------|
-| `add-contact` | Add a new contact (interactive prompts) | `add-contact` |
-| `show-contacts` | List all contacts in a table | `show-contacts` |
-| `find-contact <query>` | Search contacts by any field | `find-contact Alice` |
-| `edit-contact <name>` | Edit a field of an existing contact | `edit-contact Alice` |
-| `delete-contact <name>` | Delete a contact permanently | `delete-contact Alice` |
-| `birthdays <days>` | Contacts with birthday in the next N days | `birthdays 30` |
-
-**Editable fields:** `name` · `add-phone` · `remove-phone` · `phone` (replace) · `email` · `birthday` · `address`
-
-### Notes
-
-| Command | Description | Example |
-|---------|-------------|---------|
-| `add-note` | Create a new note (interactive) | `add-note` |
-| `show-notes` | List all notes | `show-notes` |
-| `find-note <query>` | Full-text search in notes | `find-note meeting` |
-| `edit-note <title>` | Edit a note's title or body | `edit-note "Team sync"` |
-| `delete-note <title>` | Delete a note | `delete-note "Team sync"` |
-
-### Tags *(bonus)*
-
-| Command | Description | Example |
-|---------|-------------|---------|
-| `add-tag <title> <tag>` | Attach a tag to a note | `add-tag "Team sync" work` |
-| `remove-tag <title> <tag>` | Remove a tag from a note | `remove-tag "Team sync" work` |
-| `find-by-tag <tag>` | Find all notes with a tag | `find-by-tag work` |
-| `sort-by-tags` | List all notes sorted by tag | `sort-by-tags` |
-
-### System
-
-| Command | Description |
-|---------|-------------|
-| `help` | Show the command table |
-| `exit` / `quit` / `close` | Save data and exit |
+| Command           | Description                                   |
+| ----------------- | --------------------------------------------- |
+| `/add-contact`    | Add a new contact (interactive field prompts) |
+| `/show-contacts`  | List all contacts                             |
+| `/find-contact`   | Search contacts by any field                  |
+| `/edit-contact`   | Edit a field of an existing contact           |
+| `/delete-contact` | Delete a contact                              |
+| `/birthdays`      | Contacts with a birthday in the next N days   |
+| `/add-note`       | Create a new note (interactive)               |
+| `/show-notes`     | List all notes                                |
+| `/find-note`      | Search notes by title or body                 |
+| `/edit-note`      | Edit a note's title or body                   |
+| `/delete-note`    | Delete a note                                 |
+| `/add-tag`        | Attach a tag to a note                        |
+| `/remove-tag`     | Remove a tag from a note                      |
+| `/find-by-tag`    | Find notes by tag                             |
+| `/sort-by-tags`   | List notes sorted alphabetically by tag       |
+| `/help`           | Show the command list                         |
+| `/exit`           | Save data and exit                            |
 
 ---
 
-## 📋 Usage Examples
-
-### Add a contact
-
-```
-[assistant] ❯ add-contact
-
-  ── New Contact ──
-  Full name: Alice Johnson
-  Phone(s) [comma-separated, or blank]: +380991234567, +380501112233
-  E-mail [or blank]: alice@example.com
-  Birthday DD.MM.YYYY [or blank]: 15.03.1990
-  Address [or blank]: 123 Main St, Kyiv
-
-✓  Contact 'Alice Johnson' added successfully.
-```
-
-### View upcoming birthdays
-
-```
-[assistant] ❯ birthdays 14
-
-╭─ Upcoming Birthdays ─────────────────────────────╮
-│ Name          │ Birthday   │ Days Until           │
-│ Alice Johnson │ 15.03.1990 │ 3   ← green if ≤ 3d │
-│ Bob Smith     │ 20.03.1985 │ 8                    │
-╰──────────────────────────────────────────────────╯
-```
-
-### Work with notes and tags
-
-```
-[assistant] ❯ add-note
-  Title: Sprint planning
-  Body: Discuss Q2 roadmap and assign tasks.
-
-[assistant] ❯ add-tag Sprint planning work
-✓  Tag '#work' added to 'Sprint planning'.
-
-[assistant] ❯ find-by-tag work
-  # Sprint planning  #work  2026-05-26  Discuss Q2 roadmap…
-```
-
----
-
-## 💾 Data Storage
-
-All data is saved automatically to `~/.smart_assistant/`:
-
-```
-~/.smart_assistant/
-├── contacts.pkl   # address book
-├── notes.pkl      # notes and tags
-└── history.txt    # command history
-```
-
-Writes are **atomic** — a crash mid-save cannot corrupt your data.
-
----
-
-## 🏗️ Project Structure
+## Project structure
 
 ```
 smart-assistant-cli/
+├── data/
+│   ├── contacts.pkl     address book (created automatically on first run)
+│   └── notes.pkl        notes (created automatically on first run)
 ├── src/
-│   └── smart_assistant/
-│       ├── __init__.py          # package version
-│       ├── __main__.py          # entry point (python -m smart_assistant)
-│       ├── cli.py               # REPL loop + command dispatch
-│       ├── models/
-│       │   ├── fields.py        # Field hierarchy (Name, Phone, Email, Birthday, Address, Tag)
-│       │   ├── contact.py       # Record + AddressBook
-│       │   └── note.py          # Note + NoteBook
-│       ├── storage/
-│       │   └── repository.py    # ALL filesystem I/O (atomic pickle read/write)
-│       ├── handlers/
-│       │   ├── contacts.py      # Pure contact handler functions
-│       │   └── notes.py         # Pure note handler functions
-│       └── ui/
-│           └── renderer.py      # ALL rich output (the only file that imports rich)
+│   ├── __init__.py      package version
+│   ├── __main__.py      entry point
+│   ├── cli.py           REPL loop and command dispatch
+│   ├── fields.py        Field base class and all field types
+│   ├── contact.py       Record and AddressBook classes
+│   ├── note.py          Note and NoteBook classes
+│   ├── repository.py    pickle persistence (the only file touching disk)
+│   ├── handlers.py      pure handler functions (no I/O)
+│   └── renderer.py      all terminal output (the only file using rich)
+├── requirements.txt
 ├── pyproject.toml
-├── README.md
-└── .gitignore
+└── README.md
 ```
 
-### Architecture
+**Layered architecture:**
 
 ```
-CLI Layer       cli.py           — REPL, I/O, command routing
-     ↓
-Handler Layer   handlers/        — Pure functions; no I/O; return (status, data)
-     ↓
-Model Layer     models/          — OOP domain objects; all validation here
-     ↓
-Storage Layer   storage/         — Isolated pickle persistence; atomic writes
-     ↑
-UI Layer        ui/renderer.py   — All rich output; accepts plain dicts only
+cli.py  →  handlers.py  →  contact.py / note.py / fields.py
+  ↓                                ↓
+renderer.py             repository.py
 ```
 
-**OOP principles applied:**
-- **Encapsulation** — each class owns its data and exposes a minimal public API
-- **Abstraction** — `Field`, `AddressBook`, `NoteBook` hide internal details
-- **Inheritance** — `Name`, `Phone`, `Email`, `Birthday`, `Address`, `Tag` all extend `Field`
-- **Polymorphism** — each `Field` subclass overrides `validate()` and `__str__()`
+- `handlers.py` contains only pure functions: no printing, no input
+- `renderer.py` is the only file that imports `rich`
+- `repository.py` is the only file that reads or writes files
 
 ---
 
-## 🧑‍💻 Development
+## Contributing
 
-### Setup
+1. Clone the repository:
 
-```bash
-git clone https://github.com/Serhii2009/smart-assistant-cli.git
-cd smart-assistant-cli
+   ```
+   git clone https://github.com/Serhii2009/smart-assistant-cli.git
+   cd smart-assistant-cli
+   ```
 
-python -m venv .venv
-# Windows
-.venv\Scripts\activate
-# macOS / Linux
-source .venv/bin/activate
+2. Create a branch for your work:
 
-pip install -e .
-```
+   ```
+   git checkout -b feature/your-feature-name
+   ```
 
-### Run from source
+3. Install dependencies:
 
-```bash
-assistant
-# or
-python -m smart_assistant
-```
+   ```
+   pip install -r requirements.txt
+   pip install -e .
+   ```
 
-### Build a distribution package
+4. Make your changes, commit them, and open a pull request against `main`.
 
-```bash
-pip install build
-python -m build
-# produces dist/smart_assistant_cli-1.0.0-py3-none-any.whl
-```
+Branch naming conventions: `feature/`, `fix/`, `docs/`.
 
 ---
 
-## 🤝 Contributing
+## License
 
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Follow PEP 8 and the existing code style
-4. Keep handler functions pure (no I/O)
-5. Keep all `rich` calls inside `ui/renderer.py`
-6. Open a Pull Request with a clear description
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
-
----
-
-<p align="center">Built with ❤️ using <a href="https://github.com/Textualize/rich">rich</a> and <a href="https://github.com/prompt-toolkit/python-prompt-toolkit">prompt_toolkit</a></p>
+MIT — see [LICENSE](LICENSE).

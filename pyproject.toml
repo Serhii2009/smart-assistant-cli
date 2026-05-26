@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "smart-assistant-cli"
+name = "notii"
 version = "1.0.0"
-description = "A personal productivity CLI tool for managing contacts and notes in your terminal"
+description = "A contacts and notes manager for your terminal"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
@@ -20,6 +20,7 @@ keywords = [
     "address-book",
     "terminal",
     "personal-assistant",
+    "notii",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -41,7 +42,7 @@ dependencies = [
 ]
 
 [project.scripts]
-assistant = "smart_assistant.__main__:main"
+notii = "src.__main__:main"
 
 [project.urls]
 Homepage = "https://github.com/Serhii2009/smart-assistant-cli"
@@ -50,7 +51,7 @@ Issues = "https://github.com/Serhii2009/smart-assistant-cli/issues"
 Changelog = "https://github.com/Serhii2009/smart-assistant-cli/releases"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/smart_assistant"]
+packages = ["src"]
 
 [tool.hatch.build.targets.sdist]
 include = [
