@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "smart-assistant-cli"
+version = "1.0.0"
+description = "A personal productivity CLI tool for managing contacts and notes in your terminal"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [
+    { name = "Serhii Kravchenko", email = "sergiokravchenko@gmail.com" },
+]
+keywords = [
+    "cli",
+    "contacts",
+    "notes",
+    "productivity",
+    "address-book",
+    "terminal",
+    "personal-assistant",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Scheduling",
+    "Topic :: Utilities",
+]
+dependencies = [
+    "rich>=13.0.0",
+    "prompt_toolkit>=3.0.0",
+]
+
+[project.scripts]
+assistant = "smart_assistant.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/Serhii2009/smart-assistant-cli"
+Repository = "https://github.com/Serhii2009/smart-assistant-cli"
+Issues = "https://github.com/Serhii2009/smart-assistant-cli/issues"
+Changelog = "https://github.com/Serhii2009/smart-assistant-cli/releases"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/smart_assistant"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/README.md",
+    "/LICENSE",
+    "/pyproject.toml",
+]
