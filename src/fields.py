@@ -41,27 +41,27 @@ from abc import ABC, abstractmethod
 # Also, you may add some type hints!
 
 class Field(ABC): # inherit from ABC, not plain object
-    def __init__(self, value):
-        self.value = self.validate(value)  # validate on creation, not manually
-
+	def __init__(self, value):
+		self.value = self.validate(value)  # validate on creation, not manually
+		
 	@abstractmethod
 	def validate(self, value: str) -> str:
 		"""Return the cleaned value or raise ValueError."""
 		
-    def __str__(self):
-        return str(self.value)
+	def __str__(self):
+		return str(self.value)
 
 
 class Name(Field):
 	def validate(self, value: str) -> str:
-        cleaned = value.strip()
-        if not cleaned:
-            raise ValueError("Name cannot be empty.")
-        return cleaned
+		cleaned = value.strip()
+		if not cleaned:
+			raise ValueError("Name cannot be empty.")
+		return cleaned
 
 
 class Phone(Field):
-    def validate(self, value):
+	def validate(self, value):
 		pattern = r"^\+?\d{10,15}$"
 		normalised = re.sub(r"[\s\-().]+", "", value.strip())
 		if not re.match(pattern, normalised):
@@ -72,28 +72,28 @@ class Phone(Field):
 
 
 class Birthday(Field):
-    def validate(self, value):
-        try:
-            self._date = datetime.strptime(value.strip(), "%d.%m.%Y").date()
-        except ValueError:
-            raise ValueError("Invalid date format. Use DD.MM.YYYY")
+	def validate(self, value):
+		try:
+			self._date = datetime.strptime(value.strip(), "%d.%m.%Y").date()
+		except ValueError:
+			raise ValueError("Invalid date format. Use DD.MM.YYYY")
 		return value.strip()
 
 
 class Email(Field):
-    def validate(self, value):
-        pattern = r"\w+@\w+\.\w+"
+	def validate(self, value):
+		pattern = r"\w+@\w+\.\w+"
 		cleaned = value.strip()
-        if not re.match(pattern, cleaned):
-            raise ValueError("Invalid email format.")
-        return cleaned  # store cleaned, not re.search().group()
+		if not re.match(pattern, cleaned):
+			raise ValueError("Invalid email format.")
+		return cleaned  # store cleaned, not re.search().group()
 
 
 class Address(Field):
-    def validate(self, value: str) -> str:
-        pass
+	def validate(self, value: str) -> str:
+		pass
 
 
 class Tag(Field):
-    def validate(self, value: str) -> str:
-        pass
+	def validate(self, value: str) -> str:
+		pass
