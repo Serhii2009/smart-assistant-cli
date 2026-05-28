@@ -24,3 +24,36 @@ External libs:
 
 Assignee:
 """
+
+import pickle, os, sys, tempfile
+from pathlib import Path
+from note import NoteBook
+from contact import AddressBook
+
+
+def data_dir():
+    path = Path(__file__).parent / "data"
+    if not path.exists():
+        path.mkdir()
+
+def save_address_book(book):
+    with open("contacts.pkl", "wb") as f:
+        pickle.dump(book, f)
+
+def load_address_book():
+    try:
+        with open("contacts.pkl", "rb") as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        return AddressBook() 
+    
+def save_notebook(nb):
+    with open("notes.pkl", "wb") as f:
+        pickle.dump(nb, f)
+
+def load_notebook():
+    try:
+        with open("notes.pkl", "rb") as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        return NoteBook() 
