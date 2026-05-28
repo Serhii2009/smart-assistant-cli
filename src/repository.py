@@ -32,29 +32,33 @@ from contact import AddressBook
 
 
 def get_data_dir():
-    path = Path(__file__).parent / "data"
+    path = Path(__file__).parent.parent / "data"
     if not path.exists():
         path.mkdir()
     return path
 
 def save_address_book(book):
-    with open("contacts.pkl", "wb") as f:
+    path = get_data_dir()
+    with open(path / "contacts.pkl", "wb") as f:
         pickle.dump(book, f)
 
 def load_address_book():
+    path = get_data_dir()
     try:
-        with open("contacts.pkl", "rb") as f:
+        with open(path / "contacts.pkl", "rb") as f:
             return pickle.load(f)
     except FileNotFoundError:
         return AddressBook() 
     
 def save_notebook(nb):
-    with open("notes.pkl", "wb") as f:
+    path = get_data_dir()
+    with open(path / "notes.pkl", "wb") as f:
         pickle.dump(nb, f)
 
 def load_notebook():
+    path = get_data_dir()
     try:
-        with open("notes.pkl", "rb") as f:
+        with open(path / "notes.pkl", "rb") as f:
             return pickle.load(f)
     except FileNotFoundError:
         return NoteBook() 
