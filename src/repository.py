@@ -22,7 +22,7 @@ Dependencies (internal):
 External libs:
     none (stdlib only: os, pickle, sys, tempfile, pathlib)
 
-Assignee:
+Assignee: Constantine Kolesnik
 """
 
 import pickle, os, sys, tempfile
@@ -62,3 +62,4 @@ def load_notebook():
             return pickle.load(f)
     except FileNotFoundError:
         return NoteBook() 
+    
