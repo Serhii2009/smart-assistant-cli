@@ -31,10 +31,11 @@ from note import NoteBook
 from contact import AddressBook
 
 
-def data_dir():
+def get_data_dir():
     path = Path(__file__).parent / "data"
     if not path.exists():
         path.mkdir()
+    return path
 
 def save_address_book(book):
     with open("contacts.pkl", "wb") as f:
