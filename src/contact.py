@@ -107,15 +107,25 @@ class Record:
                 self.phones.remove(p)
                 return
         raise KeyError(f"Phone '{phone}' not found.")  # raise instead of silent fail
-           
-    def add_birthday(self, value):
-        self.birthday = Birthday(value)
 
-    def add_email(self, value):
-        self.email = Email(value)
+    def edit_name(self, new_name):
+        pass
 
-    def add_address(self, value):
-        self.address = Address(value)
+    def edit_email(self, value):
+        pass
+
+    def edit_birthday(self, value):
+        pass
+
+    def edit_address(self, value):
+        pass
+
+    def days_to_birthday():
+        pass
+
+    def matches_query(query):
+        pass
+
 
 class AddressBook(UserDict):
     
@@ -134,5 +144,15 @@ class AddressBook(UserDict):
             raise KeyError(f"Contact '{name}' not found.")  # consistent error handling
         del self.data[key]
 
-    def get_upcoming_birthdays(self, days):
+    def upcoming_birthdays(self, days):
         pass  # to be implemented — loop self.data.values(), check r.birthday.days_until <= days
+
+    def rename(self, old, new):
+        pass 
+
+    def search(self, query):
+        pass
+
+    def all_records(self):
+        for name, record in self.data.items():
+            print(record)
