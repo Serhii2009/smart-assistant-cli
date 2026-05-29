@@ -109,23 +109,25 @@ class Record:
         raise KeyError(f"Phone '{phone}' not found.")  # raise instead of silent fail
 
     def edit_name(self, new_name):
-        pass
+         self.name = new_name
 
     def edit_email(self, value):
-        pass
+        self.email = value
 
     def edit_birthday(self, value):
-        pass
+        self.birthday = value
 
     def edit_address(self, value):
-        pass
+        self.address = value
 
     def days_to_birthday():
         pass
 
     def matches_query(query):
         pass
-
+    
+    def to_dict():
+        pass
 
 class AddressBook(UserDict):
     
