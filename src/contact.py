@@ -64,97 +64,158 @@ Dependencies: fields.py (Name, Phone, Email, Birthday, Address)
 Assignee: Constantine Kolesnik
 """
 
-from collections import UserDict
+from __future__ import annotations
+
 import re
+from collections import UserDict
+from typing import Optional
+
 from fields import Name, Phone, Birthday, Email, Address
 
-# Note and NoteBook are defined in note.py — not imported here.
-# Record does not own notes; notes are managed separately by NoteBook.
-
 class Record:
-    def __init__(self, name):
+
+    _STRIP_RE = re.compile(r"[\s\-().]+")
+  
+    def __init__(self, name, *, phones=None, email=None, birthday=None, address=None):
         self.name = Name(name)
         self.phones: list[Phone] = []
-        self.birthday = None 
-        self.email  = None 
-        self.address = None 
+        self.birthday = Birthday(birthday) if birthday else None 
+        self.email  = Email(email) if email else None
+        self.address = Address(address) if address else None
+        for phone in phones or []:
+            self.add_phone(phone)
         
     def __str__(self):
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
-    
-    def add_phone(self, phone):
-        # Check for duplicates before adding
-        normalised = re.sub(r"[\s\-().]+", "", phone.strip())
-        if any(re.sub(r"[\s\-().]+", "", p.value) == normalised for p in self.phones):
-            raise ValueError(f"Phone '{phone}' is already in this contact.")
-        self.phones.append(Phone(phone)) 
+        lines = [f"Name   : {self.name}"]
+        if self.phones:
+            lines.append("Phones : " + ", ".join(str(p) for p in self.phones))
+        if self.email:
+            lines.append(f"Email  : {self.email}")
+        if self.birthday:
+            lines.append(f"BD     : {self.birthday}  ({self.birthday.days_until} days)")
+        if self.address:
+            lines.append(f"Address: {self.address}")
+        return "\n".join(lines)
 
-    def edit_phone(self, old_phone, new_phone):
-        for i, p in enumerate(self.phones):
-            if p.value == old_phone:
-                self.phones[i] = Phone(new_phone)
-                return
-        raise KeyError(f"Phone '{old_phone}' not found.")  # raise instead of silent fail
-                    
-    def find_phone(self, phone):
-        for p in self.phones:
-            if p.value == phone:
-                return p  # return the Phone object, not p.value
+    def _norm(self, value: str) -> str:
+        return self._STRIP_RE.sub("", value.strip())
     
-    def remove_phone(self, phone):
-        for p in self.phones:
-            if p.value == phone:
-                self.phones.remove(p)
-                return
-        raise KeyError(f"Phone '{phone}' not found.")  # raise instead of silent fail
+    def add_phone(self, value):
+        phone = Phone(value)
+        norm = self._norm(phone.value)
+        if any(self._norm(p.value) == norm for p in self.phones):
+            raise ValueError(f"Phone '{phone.value}' is already in this contact.")
+        self.phones.append(phone)
+        return phone
+
+    def find_phone(self, value):
+        norm = self._norm(value)
+        return next((p for p in self.phones if self._norm(p.value) == norm), None)
+
+    def edit_phone(self, old_value, new_value):
+        old = self.find_phone(old_value)
+        if old is None:
+            raise KeyError(f"Phone '{old_value}' not found in '{self.name}'.")
+        new = Phone(new_value)
+        norm_new = self._norm(new.value)
+        if any(self._norm(p.value) == norm_new and p is not old for p in self.phones):
+            raise ValueError(f"Phone '{new.value}' is already in this contact.")
+        self.phones[self.phones.index(old)] = new
+        return new
+                    
+    def remove_phone(self, value):
+        phone = self.find_phone(value)
+        if phone is None:
+            raise KeyError(f"Phone '{value}' not found in '{self.name}'.")
+        self.phones.remove(phone)
 
     def edit_name(self, new_name):
-         self.name = new_name
+        self.name = Name(new_name) # wrap in Name field, not raw string
 
     def edit_email(self, value):
-        self.email = value
+        self.email = Email(value)
+
+    def clear_email(self):
+        self.email = None
 
     def edit_birthday(self, value):
-        self.birthday = value
+        self.birthday = Birthday(value)
+
+    def clear_birthday(self):
+        self.birthday = None
 
     def edit_address(self, value):
-        self.address = value
+        self.address = Address(value)
 
-    def days_to_birthday():
-        pass
+    def clear_address(self):
+        self.address = None
 
-    def matches_query(query):
-        pass
-    
-    def to_dict():
-        pass
+    def days_to_birthday(self):
+        return self.birthday.days_until if self.birthday else None
+
+    def matches_query(self, query):
+        q = query.lower()
+        candidates = [
+            self.name.value,
+            *(p.value for p in self.phones),
+            self.email.value if self.email else "",
+            self.birthday.value if self.birthday else "",
+            self.address.value if self.address else "",
+        ]
+        return any(q in c.lower() for c in candidates)
+
+    def to_dict(self):
+        return {
+            "name": self.name.value,
+            "phones": ", ".join(p.value for p in self.phones) or "—",
+            "email": self.email.value if self.email else "—",
+            "birthday": self.birthday.value if self.birthday else "—",
+            "days_until_birthday": str(self.birthday.days_until) if self.birthday else "—",
+            "address": self.address.value if self.address else "—",
+        }
+
 
 class AddressBook(UserDict):
     
-    def add_record(self, record: Record):
-        self.data[record.name.value.lower()] = record  # lowercase key for case-insensitive lookup
+    def add(self, record: Record):
+        key = record.name.value.lower()
+        if key in self.data:
+            raise ValueError(f"A contact named '{record.name}' already exists.")
+        self.data[key] = record
     
     def find(self, name):
         record = self.data.get(name.strip().lower())
         if record is None:
-            raise KeyError(f"Contact '{name}' not found.")  # raise instead of returning None silently
+            raise KeyError(f"Contact '{name}' not found.")
         return record
          
     def delete(self, name):
         key = name.strip().lower()
         if key not in self.data:
-            raise KeyError(f"Contact '{name}' not found.")  # consistent error handling
+            raise KeyError(f"Contact '{name}' not found.")
         del self.data[key]
 
-    def upcoming_birthdays(self, days):
-        pass  # to be implemented — loop self.data.values(), check r.birthday.days_until <= days
-
-    def rename(self, old, new):
-        pass 
+    def rename(self, old_name, new_name):
+        record = self.find(old_name)
+        new_key = new_name.strip().lower()
+        if new_key in self.data and new_key != old_name.strip().lower():
+            raise ValueError(f"A contact named '{new_name}' already exists.")
+        del self.data[old_name.strip().lower()]
+        record.edit_name(new_name)
+        self.data[new_key] = record
 
     def search(self, query):
-        pass
+        return [r for r in self.data.values() if r.matches_query(query)]
+
+    def upcoming_birthdays(self, days):
+        results = [
+            (r, r.days_to_birthday())
+            for r in self.data.values()
+            if r.days_to_birthday() is not None
+        ]
+        filtered = [(r, d) for r, d in results if 0 <= d <= days]
+        filtered.sort(key=lambda x: x[1])
+        return filtered
 
     def all_records(self):
-        for name, record in self.data.items():
-            print(record)
+        return sorted(self.data.values(), key=lambda r: r.name.value.lower())
