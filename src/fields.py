@@ -78,7 +78,9 @@ class Birthday(Field):
 		except ValueError:
 			raise ValueError("Invalid date format. Use DD.MM.YYYY")
 		return value.strip()
-
+# as I see _date here. That means I need to make @propery may be??? not 100%
+# date and days_until must be here somehow, may be to use super(). and __init__ to 
+#override 
 
 class Email(Field):
 	def validate(self, value):
