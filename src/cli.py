@@ -110,6 +110,7 @@ from .handlers import (
     handle_delete_note,
     handle_upcoming_birthdays,
 )
+
 from .renderer import (
     render_welcome,
     render_help,
