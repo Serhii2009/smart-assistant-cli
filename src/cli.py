@@ -44,3 +44,92 @@ External libs:
 
 Assignee:
 """
+
+from prompt_toolkit import PromptSession
+from prompt_toolkit.completion import WordCompleter
+
+from repository import (
+    load_address_book,
+    save_address_book,
+    load_notebook,
+    save_notebook,
+)
+from handlers import handle_upcoming_birthdays
+from renderer import (
+    render_welcome,
+    render_help,
+    render_birthdays_table,
+    render_error,
+    render_empty,
+)
+
+
+COMMANDS = [
+    "/help",
+    "/birthdays",
+    "/exit",
+]
+
+
+COMMAND_HELP = [
+    {
+        "command": "/birthdays",
+        "description": "Show contacts whose birthday is within N days from today",
+    },
+    {
+        "command": "/exit",
+        "description": "Save data and exit",
+    },
+]
+
+
+def _ask(session, label, required=False):
+    while True:
+        value = session.prompt(f"{label}: ").strip()
+
+        if value or not required:
+            return value
+
+        render_error(f"{label} is required.")
+
+
+def _dispatch(command, book, notebook, session):
+    if command == "/help":
+        render_help(COMMAND_HELP)
+        return
+
+    if command == "/birthdays":
+        days_str = _ask(session, "Days", required=True)
+
+        status, payload = handle_upcoming_birthdays(book, days_str)
+
+        if status == "ok":
+            render_birthdays_table(payload)
+        elif status == "empty":
+            render_empty("birthdays")
+        else:
+            render_error(payload)
+
+        return
+
+    render_error(f"Unknown command: {command}")
+
+
+def run():
+    book = load_address_book()
+    notebook = load_notebook()
+
+    session = PromptSession()
+    completer = WordCompleter(COMMANDS, ignore_case=True)
+
+    render_welcome()
+
+    while True:
+        command = session.prompt("> ", completer=completer).strip()
+
+        if command == "/exit":
+            save_address_book(book)
+            save_notebook(notebook)
+            break
+
+        _dispatch(command, book, notebook, session)

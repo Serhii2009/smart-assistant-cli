@@ -30,7 +30,7 @@ Dependencies: abc, re, datetime  (stdlib only)
 Assignee: Constantine Kolesnik
 """
 
-from datetime import datetime
+from datetime import datetime, date
 import re
 from abc import ABC, abstractmethod
 
@@ -43,11 +43,11 @@ from abc import ABC, abstractmethod
 class Field(ABC): # inherit from ABC, not plain object
 	def __init__(self, value):
 		self.value = self.validate(value)  # validate on creation, not manually
-		
+
 	@abstractmethod
 	def validate(self, value: str) -> str:
 		"""Return the cleaned value or raise ValueError."""
-		
+
 	def __str__(self):
 		return str(self.value)
 
@@ -72,12 +72,40 @@ class Phone(Field):
 
 
 class Birthday(Field):
-	def validate(self, value):
-		try:
-			self._date = datetime.strptime(value.strip(), "%d.%m.%Y").date()
-		except ValueError:
-			raise ValueError("Invalid date format. Use DD.MM.YYYY")
-		return value.strip()
+    def validate(self, value):
+        cleaned = value.strip()
+
+        try:
+            self._date = datetime.strptime(cleaned, "%d.%m.%Y").date()
+        except ValueError:
+            raise ValueError("Invalid date format. Use DD.MM.YYYY")
+
+        if self._date >= date.today():
+            raise ValueError("Birthday must be a past date.")
+
+        return cleaned
+
+    @property
+    def date(self):
+        return self._date
+
+    @property
+    def days_until(self):
+        today = date.today()
+
+        try:
+            next_birthday = self._date.replace(year=today.year)
+        except ValueError:
+            # Якщо день народження 29.02, а поточний рік не високосний
+            next_birthday = self._date.replace(year=today.year, day=28)
+
+        if next_birthday < today:
+            try:
+                next_birthday = self._date.replace(year=today.year + 1)
+            except ValueError:
+                next_birthday = self._date.replace(year=today.year + 1, day=28)
+
+        return (next_birthday - today).days
 
 
 class Email(Field):
