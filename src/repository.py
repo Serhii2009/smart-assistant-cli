@@ -93,8 +93,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-from note import NoteBook
-from contact import AddressBook
+from .note import NoteBook
+from .contact import AddressBook
 
 # Constants
 _PROJECT_ROOT = Path(__file__).parent.parent
@@ -144,7 +144,7 @@ def load_address_book() -> AddressBook:
         _atomic_save(book, path)  # create file on first run so it's visible
         return book
     return _safe_load(path, AddressBook)
-    
+
 def save_notebook(nb: NoteBook) -> None:
     _atomic_save(nb, get_data_dir() / NOTES_FILE)
 
