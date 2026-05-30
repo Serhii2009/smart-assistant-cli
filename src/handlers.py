@@ -67,3 +67,69 @@ External libs:
 Assignee:
 """
 
+from .note import Note
+
+
+def handle_add_note(notebook, title, body):
+    try:
+        note = Note(title, body)
+        notebook.add(note)
+        return "ok", note
+    except ValueError as exc:
+        return "error", str(exc)
+
+
+def handle_show_notes(notebook):
+    notes = notebook.all_notes()
+
+    if not notes:
+        return "empty", []
+
+    return "ok", notes
+
+
+def handle_find_note(notebook, query):
+    if not query.strip():
+        return "error", "Search query cannot be empty."
+
+    notes = notebook.search(query)
+
+    if not notes:
+        return "empty", []
+
+    return "ok", notes
+
+
+def handle_edit_note(notebook, title, new_title, new_body):
+    try:
+        note = notebook.edit(title, new_title, new_body)
+        return "ok", note
+    except KeyError as exc:
+        return "not_found", str(exc)
+    except ValueError as exc:
+        return "error", str(exc)
+
+
+def handle_delete_note(notebook, title):
+    try:
+        notebook.delete(title)
+        return "ok", f"Note '{title}' was deleted."
+    except KeyError as exc:
+        return "not_found", str(exc)
+
+
+def handle_upcoming_birthdays(book, days_str):
+    try:
+        days = int(days_str)
+    except ValueError:
+        return "error", "Days must be a number."
+
+    if days < 0:
+        return "error", "Days cannot be negative."
+
+    rows = book.upcoming_birthdays(days)
+
+    if not rows:
+        return "empty", []
+
+    return "ok", rows

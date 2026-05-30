@@ -70,21 +70,21 @@ import re
 from collections import UserDict
 from typing import Optional
 
-from fields import Name, Phone, Birthday, Email, Address
+from .fields import Name, Phone, Birthday, Email, Address
 
 class Record:
 
     _STRIP_RE = re.compile(r"[\s\-().]+")
-  
+
     def __init__(self, name, *, phones=None, email=None, birthday=None, address=None):
         self.name = Name(name)
         self.phones: list[Phone] = []
-        self.birthday = Birthday(birthday) if birthday else None 
+        self.birthday = Birthday(birthday) if birthday else None
         self.email  = Email(email) if email else None
         self.address = Address(address) if address else None
         for phone in phones or []:
             self.add_phone(phone)
-        
+
     def __str__(self):
         lines = [f"Name   : {self.name}"]
         if self.phones:
@@ -99,7 +99,7 @@ class Record:
 
     def _norm(self, value: str) -> str:
         return self._STRIP_RE.sub("", value.strip())
-    
+
     def add_phone(self, value):
         phone = Phone(value)
         norm = self._norm(phone.value)
@@ -122,7 +122,7 @@ class Record:
             raise ValueError(f"Phone '{new.value}' is already in this contact.")
         self.phones[self.phones.index(old)] = new
         return new
-                    
+
     def remove_phone(self, value):
         phone = self.find_phone(value)
         if phone is None:
@@ -176,19 +176,19 @@ class Record:
 
 
 class AddressBook(UserDict):
-    
+
     def add(self, record: Record):
         key = record.name.value.lower()
         if key in self.data:
             raise ValueError(f"A contact named '{record.name}' already exists.")
         self.data[key] = record
-    
+
     def find(self, name):
         record = self.data.get(name.strip().lower())
         if record is None:
             raise KeyError(f"Contact '{name}' not found.")
         return record
-         
+
     def delete(self, name):
         key = name.strip().lower()
         if key not in self.data:
