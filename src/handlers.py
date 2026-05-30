@@ -66,4 +66,18 @@ External libs:
 
 Assignee:
 """
+def handle_upcoming_birthdays(book, days_str):
+    try:
+        days = int(days_str)
+    except ValueError:
+        return "error", "Days must be a number."
 
+    if days < 0:
+        return "error", "Days cannot be negative."
+
+    rows = book.upcoming_birthdays(days)
+
+    if not rows:
+        return "empty", []
+
+    return "ok", rows

@@ -42,3 +42,31 @@ External libs:
 
 Assignee:
 """
+
+from rich.console import Console
+from rich.table import Table
+
+console = Console()
+
+
+def render_birthdays_table(rows):
+    table = Table(title="Upcoming birthdays")
+
+    table.add_column("Name", style="spring_green2")
+    table.add_column("Birthday", style="bright_cyan")
+    table.add_column("Days left", style="yellow")
+    table.add_column("Phones", style="white")
+    table.add_column("Email", style="white")
+
+    for record, days_left in rows:
+        data = record.to_dict()
+
+        table.add_row(
+            data["name"],
+            data["birthday"],
+            str(days_left),
+            data["phones"],
+            data["email"],
+        )
+
+    console.print(table)
