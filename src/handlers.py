@@ -64,6 +64,38 @@ Dependencies (internal):
 External libs:
     none
 
-Assignee:
+Assignee: Constantine Kolesnik
 """
+
+from contact import Record, AddressBook
+from note import Note, NoteBook
+
+
+def handle_add_contact(book, name, *, phones, email, birthday, address) -> tuple[str, Record | str]:
+    pass
+
+def handle_show_contacts(book)-> tuple[str, list[Record]]:
+    try:
+        return "ok", book.all_records()
+    except Exception as e:
+        return "error", str(e)
+
+def handle_find_contact(book, query)-> tuple[str, list[Record]]:
+    results = book.find(query)
+    if not results:
+        return "empty", []
+    return "ok", results
+
+def handle_edit_contact(book, name, field, old_value, new_value)-> tuple[str, Record | str]:
+    pass
+
+def handle_delete_contact(book, name)-> tuple[str, str]:
+    try:
+        book.delete(name)
+        return "ok", "Record has been deleted"
+    except Exception as e:
+        return "error", str(e)
+
+def handle_upcoming_birthdays(book, days_str)-> tuple[str, list[tuple[Record, int]] | str]:
+    pass
 
